@@ -1,5 +1,6 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 
+#include "AbiilitySystem/AuraAbilitySystemComponent.h"
 #include "AbiilitySystem/AuraAttributeSet.h"
 
 void UOverlayWidgetController::BroadcastInitailValues()
@@ -23,6 +24,23 @@ void UOverlayWidgetController::BindCallBackToDependencies()
 		this, &UOverlayWidgetController::ManaChanged);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxManaAttribute()).AddUObject(
 		this, &UOverlayWidgetController::MaxManaChanged);
+	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->OnEffectAssetTags.AddLambda(
+		[this](const FGameplayTagContainer& AssetTags)
+		{
+			for (FGameplayTag Tag : AssetTags)
+			{
+
+				//需判断是否为消息的Tag
+				FGameplayTag Message = FGameplayTag::RequestGameplayTag(FName("Message"));
+				if (Tag.MatchesTag(Message))
+				{
+					//从数据行表中检索行数据
+					const FUIWidgetRow* Row = GetDataTableByTag<FUIWidgetRow>(MessageDataTable, Tag);
+					OnMessageUIWidget.Broadcast(*Row);
+				}
+			}
+		}
+	);
 }
 
 void UOverlayWidgetController::HealthChanged(const FOnAttributeChangeData& Data) const

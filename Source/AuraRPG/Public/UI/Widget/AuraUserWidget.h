@@ -4,6 +4,7 @@
 #include "Blueprint/UserWidget.h"
 #include "AuraUserWidget.generated.h"
 
+struct FUIWidgetRow;
 /**
  * 
  */
@@ -21,5 +22,5 @@ public:
 
 protected:
     UFUNCTION(BlueprintImplementableEvent)//函数能在蓝图中实现
-    void OnWidgetControllerSetEnd();//设置控制层完成之后触发
+    void WidgetControllerSet();//设置控制层完成之后触发
 };
